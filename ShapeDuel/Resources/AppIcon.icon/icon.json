@@ -1,0 +1,101 @@
+{
+  "fill" : {
+    "solid" : "extended-srgb:0.96863,0.96471,0.98039,1.00000"
+  },
+  "fill-specializations" : [
+    {
+      "value" : {
+        "solid" : "extended-srgb:0.96863,0.96471,0.98039,1.00000"
+      }
+    },
+    {
+      "appearance" : "dark",
+      "value" : {
+        "solid" : "extended-srgb:0.09020,0.09020,0.10588,1.00000"
+      }
+    }
+  ],
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "fill-specializations" : [
+            {
+              "value" : {
+                "solid" : "extended-srgb:0.27059,0.50980,0.98039,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "extended-srgb:0.47059,0.65490,0.98824,1.00000"
+              }
+            },
+            {
+              "appearance" : "tinted",
+              "value" : {
+                "solid" : "extended-srgb:0.78039,0.78039,0.80000,1.00000"
+              }
+            }
+          ],
+          "glass" : true,
+          "image-name" : "Circle.svg",
+          "name" : "Circle"
+        }
+      ],
+      "name" : "Circle",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    },
+    {
+      "layers" : [
+        {
+          "fill-specializations" : [
+            {
+              "value" : {
+                "solid" : "extended-srgb:0.89412,0.31765,0.15686,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "solid" : "extended-srgb:0.98039,0.49804,0.34902,1.00000"
+              }
+            },
+            {
+              "appearance" : "tinted",
+              "value" : {
+                "solid" : "extended-srgb:0.94902,0.94902,0.95686,1.00000"
+              }
+            }
+          ],
+          "glass" : true,
+          "image-name" : "Cross.svg",
+          "name" : "Cross"
+        }
+      ],
+      "name" : "Cross",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : [
+      "iOS"
+    ]
+  }
+}
