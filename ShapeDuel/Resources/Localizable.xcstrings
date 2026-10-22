@@ -55,6 +55,96 @@
         }
       }
     },
+    "bottomCell" : {
+      "comment" : "VoiceOver name of the bottom center cell of the 3×3 board",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottom center"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Снизу по центру"
+          }
+        }
+      }
+    },
+    "bottomLeftCell" : {
+      "comment" : "VoiceOver name of the bottom left cell of the 3×3 board",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottom left"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Снизу слева"
+          }
+        }
+      }
+    },
+    "bottomRightCell" : {
+      "comment" : "VoiceOver name of the bottom right cell of the 3×3 board",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottom right"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Снизу справа"
+          }
+        }
+      }
+    },
+    "cellRowColumn" : {
+      "comment" : "VoiceOver name of a cell on a board other than 3×3: the row and the column, counted from 1",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Row %lld, column %lld"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Строка %lld, столбец %lld"
+          }
+        }
+      }
+    },
+    "centerCell" : {
+      "comment" : "VoiceOver name of the center cell of the 3×3 board",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Center"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Центр"
+          }
+        }
+      }
+    },
     "circleFigure" : {
       "comment" : "VoiceOver name of the circle figure",
       "extractionState" : "manual",
@@ -325,6 +415,24 @@
         }
       }
     },
+    "emptyCell" : {
+      "comment" : "VoiceOver value of a free cell of the board",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empty"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пусто"
+          }
+        }
+      }
+    },
     "firstPlayerName" : {
       "comment" : "Default name of the player who moves first",
       "extractionState" : "manual",
@@ -451,6 +559,24 @@
         }
       }
     },
+    "leftCell" : {
+      "comment" : "VoiceOver name of the middle left cell of the 3×3 board",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Middle left"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Слева по центру"
+          }
+        }
+      }
+    },
     "lightTheme" : {
       "comment" : "Theme segment: always light",
       "extractionState" : "manual",
@@ -573,6 +699,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Начать заново"
+          }
+        }
+      }
+    },
+    "rightCell" : {
+      "comment" : "VoiceOver name of the middle right cell of the 3×3 board",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Middle right"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Справа по центру"
           }
         }
       }
@@ -717,6 +861,60 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Тема"
+          }
+        }
+      }
+    },
+    "topCell" : {
+      "comment" : "VoiceOver name of the top center cell of the 3×3 board",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top center"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сверху по центру"
+          }
+        }
+      }
+    },
+    "topLeftCell" : {
+      "comment" : "VoiceOver name of the top left cell of the 3×3 board",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top left"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сверху слева"
+          }
+        }
+      }
+    },
+    "topRightCell" : {
+      "comment" : "VoiceOver name of the top right cell of the 3×3 board",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top right"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сверху справа"
           }
         }
       }

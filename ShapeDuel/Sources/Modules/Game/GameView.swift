@@ -15,6 +15,8 @@ final class GameView: UIView {
 
     private var cells: [Position: BoardCell] = [:]
     private var playerCards: [Side: PlayerCardView] = [:]
+    /// VoiceOver tells whose figure is in a cell
+    private var playerNames: [Side: String] = [:]
     private var playerCardHeightConstraints: [NSLayoutConstraint] = []
     private var heightClass: HeightClass?
     /// Changes on every reset, so a finished game ending after a restart is not shown
@@ -49,11 +51,12 @@ final class GameView: UIView {
     // MARK: - Methods
 
     func showFigure(_ figure: Figure, for side: Side, at position: Position) {
-        cells[position]?.showFigure(figure, color: side.color)
+        cells[position]?.showFigure(figure, color: side.color, ownerName: playerNames[side])
     }
 
     func updatePlayers(_ players: [PlayerCardViewModel]) {
         for player in players {
+            playerNames[player.side] = player.name
             playerCards[player.side]?.configure(with: player)
         }
     }
@@ -170,7 +173,7 @@ final class GameView: UIView {
     }
 
     private func makeCell(for position: Position) -> BoardCell {
-        let cell = BoardCell()
+        let cell = BoardCell(position: position)
         cell.heightAnchor.constraint(equalTo: cell.widthAnchor).isActive = true
         cell.addAction(UIAction { [weak self] _ in
             self?.onCellTap?(position)
@@ -207,6 +210,17 @@ extension GameView {
 
 private final class BoardCell: UIControl {
 
+    // MARK: - Properties
+
+    /// Only a free cell is a button; while the computer moves it is also not enabled
+    override var accessibilityTraits: UIAccessibilityTraits {
+        get {
+            guard isEmpty else { return .none }
+            return isEnabled ? .button : [.button, .notEnabled]
+        }
+        set { super.accessibilityTraits = newValue }
+    }
+
     // MARK: - Outlets
 
     private let cardView = CardView(cornerRadius: CornerRadius.cell(for: .regular))
@@ -216,9 +230,9 @@ private final class BoardCell: UIControl {
 
     // MARK: - Initial
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupView()
+    init(position: Position) {
+        super.init(frame: .zero)
+        setupView(position: position)
     }
 
     required init?(coder: NSCoder) {
@@ -227,17 +241,18 @@ private final class BoardCell: UIControl {
 
     // MARK: - Methods
 
-    func showFigure(_ figure: Figure, color: UIColor) {
+    /// `ownerName` is read by VoiceOver after the figure: «Cross, Player 1»
+    func showFigure(_ figure: Figure, color: UIColor, ownerName: String?) {
         isEmpty = false
         alpha = 1
         figureView.show(figure, color: color, animated: true)
-        accessibilityLabel = figure.accessibilityName
+        accessibilityValue = [figure.accessibilityName, ownerName].compactMap { $0 }.joined(separator: ", ")
     }
 
     func clear() {
         isEmpty = true
         figureView.show(nil, color: .clear)
-        accessibilityLabel = nil
+        accessibilityValue = String(localized: .emptyCell)
     }
 
     /// Only a free cell is dimmed: the figures stay bright while the computer thinks
@@ -253,9 +268,10 @@ private final class BoardCell: UIControl {
 
     // MARK: - Setups
 
-    private func setupView() {
+    private func setupView(position: Position) {
         isAccessibilityElement = true
-        accessibilityTraits = .button
+        accessibilityLabel = position.accessibilityName
+        accessibilityValue = String(localized: .emptyCell)
 
         cardView.isUserInteractionEnabled = false
         cardView.translatesAutoresizingMaskIntoConstraints = false
