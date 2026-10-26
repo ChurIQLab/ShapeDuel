@@ -63,19 +63,7 @@ final class GameResultViewController: UIViewController {
     private func setupView() {
         setupGrabber()
         setupBadge()
-
-        titleLabel.text = result.title
-        titleLabel.font = Typography.title.font()
-        titleLabel.textColor = .primaryText
-        titleLabel.textAlignment = .center
-        titleLabel.numberOfLines = 0
-        titleLabel.accessibilityTraits = .header
-
-        scoreLabel.text = result.score
-        scoreLabel.font = Typography.body.font()
-        scoreLabel.textColor = .secondaryText
-        scoreLabel.textAlignment = .center
-        scoreLabel.numberOfLines = 0
+        setupLabels()
 
         let textStackView = UIStackView(arrangedSubviews: [titleLabel, scoreLabel])
         textStackView.axis = .vertical
@@ -119,6 +107,24 @@ final class GameResultViewController: UIViewController {
             textStackView.widthAnchor.constraint(equalTo: contentStackView.widthAnchor),
             buttonsStackView.widthAnchor.constraint(equalTo: contentStackView.widthAnchor)
         ])
+    }
+
+    private func setupLabels() {
+        titleLabel.text = result.title
+        titleLabel.font = Typography.title.font()
+        titleLabel.textColor = .primaryText
+        titleLabel.textAlignment = .center
+        titleLabel.numberOfLines = 0
+        titleLabel.accessibilityTraits = .header
+        // The sheet focuses the title, so it is read together with the score
+        titleLabel.accessibilityLabel = "\(result.title), \(result.score)"
+
+        scoreLabel.text = result.score
+        scoreLabel.font = Typography.body.font()
+        scoreLabel.textColor = .secondaryText
+        scoreLabel.textAlignment = .center
+        scoreLabel.numberOfLines = 0
+        scoreLabel.isAccessibilityElement = false
     }
 
     private func setupGrabber() {

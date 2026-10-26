@@ -38,6 +38,10 @@ final class GameStatusView: UIView {
     // MARK: - Setups
 
     private func setupView() {
+        // One element with the plain text: VoiceOver does not read the figure image inside the label
+        isAccessibilityElement = true
+        accessibilityTraits = .updatesFrequently
+
         textLabel.textAlignment = .center
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         addSubview(textLabel)

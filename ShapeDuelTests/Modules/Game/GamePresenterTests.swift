@@ -159,13 +159,13 @@ struct GamePresenterTests {
         #expect(view.players.map(\.state) == [.inactive, .active])
     }
 
-    @Test func winAddsPointToWinnerAndKeepsWinnerActive() throws {
+    @Test func winAddsPointToWinnerAndHighlightsWinner() throws {
         let (presenter, view) = makePresenter()
 
         try tap(firstSideWin, on: presenter)
 
         #expect(view.players.map(\.score) == [1, 0])
-        #expect(view.players.map(\.state) == [.active, .inactive])
+        #expect(view.players.map(\.state) == [.winner, .inactive])
     }
 
     @Test func drawKeepsScoresAndHighlightsNobody() throws {

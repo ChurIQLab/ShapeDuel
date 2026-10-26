@@ -19,8 +19,10 @@ nonisolated struct PlayerCardViewModel: Equatable, Sendable {
 
 extension PlayerCardViewModel {
     nonisolated enum State: Equatable, Sendable {
-        /// Moves now or has just won
+        /// Moves now
         case active
+        /// Has just won; highlighted like `active`
+        case winner
         case inactive
         /// Nobody is highlighted after a draw
         case neutral
