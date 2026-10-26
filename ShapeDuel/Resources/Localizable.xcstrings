@@ -649,6 +649,24 @@
         }
       }
     },
+    "movingPlayer" : {
+      "comment" : "VoiceOver state of the player card whose turn it is",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moves now"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ходит"
+          }
+        }
+      }
+    },
     "playAgainButton" : {
       "comment" : "Game result sheet button that starts the next game",
       "extractionState" : "manual",
@@ -681,6 +699,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Играть"
+          }
+        }
+      }
+    },
+    "playerScore" : {
+      "comment" : "VoiceOver value of a player card: the player's wins in this match",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score: %lld"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Счёт: %lld"
           }
         }
       }
@@ -1023,6 +1059,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Победа: %@"
+          }
+        }
+      }
+    },
+    "winnerPlayer" : {
+      "comment" : "VoiceOver state of the player card of the winner of the finished game",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Winner"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Победитель"
           }
         }
       }

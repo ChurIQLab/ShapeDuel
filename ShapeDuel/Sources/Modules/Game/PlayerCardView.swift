@@ -39,13 +39,13 @@ final class PlayerCardView: UIView {
         nameLabel.textColor = textColor
         scoreLabel.textColor = textColor
 
-        cardView.highlight = viewModel.state == .active
+        let isHighlighted = viewModel.state == .active || viewModel.state == .winner
+        cardView.highlight = isHighlighted
             ? CardView.Highlight(fillColor: viewModel.side.tintColor, borderColor: viewModel.side.color)
             : nil
 
         accessibilityLabel = "\(viewModel.name), \(viewModel.figure.accessibilityName)"
-        accessibilityValue = viewModel.score.formatted()
-        accessibilityTraits = viewModel.state == .active ? .selected : .none
+        accessibilityValue = accessibilityValue(for: viewModel)
     }
 
     // MARK: - Setups
@@ -85,6 +85,20 @@ final class PlayerCardView: UIView {
             figureView.widthAnchor.constraint(equalToConstant: Size.figureInCard),
             figureView.heightAnchor.constraint(equalToConstant: Size.figureInCard)
         ])
+    }
+}
+
+// MARK: - Private methods
+
+extension PlayerCardView {
+    /// «Moves now, score: 2»: the state is read before the score
+    private func accessibilityValue(for viewModel: PlayerCardViewModel) -> String {
+        let score = String(localized: .playerScore(viewModel.score))
+        switch viewModel.state {
+        case .active: return "\(String(localized: .movingPlayer)), \(score)"
+        case .winner: return "\(String(localized: .winnerPlayer)), \(score)"
+        case .inactive, .neutral: return score
+        }
     }
 }
 

@@ -176,7 +176,7 @@ final class GamePresenter {
     private func cardState(for side: Side) -> PlayerCardViewModel.State {
         switch engine.result {
         case .draw: .neutral
-        case .win(let winner, _): winner == side ? .active : .inactive
+        case .win(let winner, _): winner == side ? .winner : .inactive
         case nil: engine.currentSide == side ? .active : .inactive
         }
     }
