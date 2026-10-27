@@ -44,6 +44,9 @@ final class FigurePickerView: UIView {
     // MARK: - Setups
 
     private func setupView() {
+        // VoiceOver reads `accessibilityLabel` of the picker when the focus moves onto its tiles
+        accessibilityContainerType = .semanticGroup
+
         let spacing = style.spacing
         for tile in tiles {
             tile.touchOutset = spacing / 2

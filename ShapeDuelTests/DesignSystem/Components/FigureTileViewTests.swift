@@ -18,6 +18,7 @@ struct FigureTileViewTests {
         #expect(tile.accessibilityLabel == Figure.star.accessibilityName)
         #expect(tile.accessibilityTraits.contains(.button))
         #expect(!tile.accessibilityTraits.contains(.selected))
+        #expect(tile.accessibilityValue == nil)
     }
 
     @Test func selectedTileHasSelectedTrait() {
@@ -35,6 +36,17 @@ struct FigureTileViewTests {
 
         #expect(abs(tile.alpha - 0.3) < 0.001)
         #expect(tile.accessibilityTraits.contains(.notEnabled))
+        #expect(tile.accessibilityValue == String(localized: .takenFigure))
+    }
+
+    @Test func freedTileLosesTakenValue() {
+        let tile = FigureTileView(figure: .star, side: .second, style: .small)
+        tile.isEnabled = false
+
+        tile.isEnabled = true
+
+        #expect(tile.accessibilityValue == nil)
+        #expect(!tile.accessibilityTraits.contains(.notEnabled))
     }
 
     @Test func touchAreaIncludesOutset() {

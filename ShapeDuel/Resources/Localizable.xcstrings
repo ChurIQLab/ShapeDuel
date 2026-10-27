@@ -703,6 +703,24 @@
         }
       }
     },
+    "playerFigures" : {
+      "comment" : "VoiceOver name of a player's figure tiles on the two-player setup; the argument is «Player 1» or «Player 2»",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Figure for %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Фигура: %@"
+          }
+        }
+      }
+    },
     "playerScore" : {
       "comment" : "VoiceOver value of a player card: the player's wins in this match",
       "extractionState" : "manual",
@@ -879,6 +897,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Как в системе"
+          }
+        }
+      }
+    },
+    "takenFigure" : {
+      "comment" : "VoiceOver value of a figure tile taken by the opponent",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taken by the opponent"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Занята соперником"
           }
         }
       }
