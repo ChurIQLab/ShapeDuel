@@ -34,6 +34,17 @@ final class GamePresenter {
         engine.result == nil && engine.currentSide == computerSide
     }
 
+    private var currentStatus: GameStatusViewModel {
+        switch engine.result {
+        case .draw:
+            GameStatusViewModel(text: String(localized: .drawMessage), player: nil)
+        case .win(let winner, _):
+            winStatus(of: winner)
+        case nil:
+            turnStatus(of: engine.currentSide)
+        }
+    }
+
     // MARK: - Initial
 
     init(
@@ -75,11 +86,13 @@ final class GamePresenter {
                 haptics.playMove()
             }
             updatePanels()
+            announceMove(of: side, at: position)
             scheduleComputerMoveIfNeeded()
             return
         }
         finishGame(with: result)
         updatePanels()
+        announceMove(of: side, at: position)
         view?.showGameOver(resultViewModel(for: result), winningLine: winningLine(for: result))
     }
 
@@ -130,15 +143,22 @@ final class GamePresenter {
     }
 
     private func updateStatus() {
-        let status = switch engine.result {
-        case .draw:
-            GameStatusViewModel(text: String(localized: .drawMessage), player: nil)
-        case .win(let winner, _):
-            winStatus(of: winner)
-        case nil:
-            turnStatus(of: engine.currentSide)
+        view?.updateStatus(currentStatus)
+    }
+
+    /// «Player 1: Cross, Center. Player 2's turn»; the last move is told without the status:
+    /// the result sheet reads the result
+    private func announceMove(of side: Side, at position: Position) {
+        let move = String(localized: .moveAnnouncement(
+            name(for: side),
+            figure(for: side).accessibilityName,
+            position.accessibilityName
+        ))
+        guard engine.result == nil else {
+            view?.announce(move)
+            return
         }
-        view?.updateStatus(status)
+        view?.announce("\(move). \(currentStatus.text)")
     }
 
     private func turnStatus(of side: Side) -> GameStatusViewModel {
