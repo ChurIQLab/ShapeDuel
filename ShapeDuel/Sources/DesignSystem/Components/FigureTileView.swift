@@ -111,6 +111,7 @@ final class FigureTileView: UIControl {
             ? CardView.Highlight(fillColor: side.tintColor, borderColor: side.color)
             : nil
         alpha = isEnabled ? 1 : Constants.disabledAlpha
+        accessibilityValue = isEnabled ? nil : String(localized: .takenFigure)
     }
 }
 

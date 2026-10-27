@@ -57,6 +57,8 @@ final class GameSetupView: UIView {
                 self?.onNameChange?(name, player.nameField.side)
             }
             let pickerView = makeFigurePicker(with: player.figurePicker, style: .small)
+            // The tiles follow the name field: VoiceOver names the player when it enters them
+            pickerView.accessibilityLabel = String(localized: .playerFigures(player.nameField.label))
             contentStackView.addArrangedSubview(makeSection(of: [fieldView, pickerView]))
             return fieldView
         }
