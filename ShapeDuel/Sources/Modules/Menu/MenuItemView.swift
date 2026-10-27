@@ -120,10 +120,12 @@ final class MenuItemView: UIControl {
 
     private func setupLabels() {
         titleLabel.font = Typography.accent.font()
+        titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.textColor = .primaryText
         titleLabel.numberOfLines = 0
 
         subtitleLabel.font = Typography.caption.font()
+        subtitleLabel.adjustsFontForContentSizeCategory = true
         subtitleLabel.textColor = .secondaryText
         subtitleLabel.numberOfLines = 0
     }

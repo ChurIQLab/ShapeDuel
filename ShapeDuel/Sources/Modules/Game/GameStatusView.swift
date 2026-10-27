@@ -54,7 +54,9 @@ final class GameStatusView: UIView {
             textLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
 
-        registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (view: GameStatusView, _: UITraitCollection) in
+        registerForTraitChanges(
+            [UITraitUserInterfaceStyle.self, UITraitPreferredContentSizeCategory.self]
+        ) { (view: GameStatusView, _: UITraitCollection) in
             view.updateText()
         }
     }
@@ -68,7 +70,7 @@ final class GameStatusView: UIView {
             return
         }
 
-        let textFont = Typography.body.font()
+        let textFont = Typography.body.font(compatibleWith: traitCollection)
         let text = NSMutableAttributedString(string: status.text, attributes: [
             .font: textFont,
             .foregroundColor: UIColor.secondaryText
@@ -81,17 +83,22 @@ final class GameStatusView: UIView {
         }
 
         text.addAttributes([
-            .font: Typography.accent.font(),
+            .font: Typography.accent.font(compatibleWith: traitCollection),
             .foregroundColor: UIColor.primaryText
         ], range: player.nameRange)
 
         let color = player.side.color.resolvedColor(with: traitCollection)
-        let attachment = NSTextAttachment(image: player.figure.image(size: Size.figureInStatus, color: color))
+        // The figure grows with the text around it
+        let figureSize = UIFontMetrics(forTextStyle: .body).scaledValue(
+            for: Size.figureInStatus,
+            compatibleWith: traitCollection
+        )
+        let attachment = NSTextAttachment(image: player.figure.image(size: figureSize, color: color))
         attachment.bounds = CGRect(
             x: 0,
-            y: (textFont.capHeight - Size.figureInStatus) / 2,
-            width: Size.figureInStatus,
-            height: Size.figureInStatus
+            y: (textFont.capHeight - figureSize) / 2,
+            width: figureSize,
+            height: figureSize
         )
         let figure = NSMutableAttributedString(attachment: attachment)
         figure.append(NSAttributedString(string: " ", attributes: [.font: textFont]))

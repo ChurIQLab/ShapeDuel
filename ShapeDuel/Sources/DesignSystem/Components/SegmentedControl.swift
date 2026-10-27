@@ -71,6 +71,9 @@ final class SegmentedControl: UIControl {
     // MARK: - Setups
 
     private func setupView() {
+        // Like the system segmented control: the track keeps its height, the titles stop growing at xxxL
+        maximumContentSizeCategory = Constants.maximumContentSizeCategory
+
         backgroundColor = style.trackColor
         layer.cornerCurve = .continuous
 
@@ -174,6 +177,7 @@ extension SegmentedControl {
 
             titleLabel.text = title
             titleLabel.font = font
+            titleLabel.adjustsFontForContentSizeCategory = true
             titleLabel.textColor = .secondaryText
             titleLabel.textAlignment = .center
             titleLabel.adjustsFontSizeToFitWidth = true
@@ -240,5 +244,6 @@ extension SegmentedControl {
         static let minimumTitleScale: CGFloat = 0.7
         static let animationDuration: TimeInterval = 0.3
         static let springDamping: CGFloat = 0.85
+        static let maximumContentSizeCategory: UIContentSizeCategory = .extraExtraExtraLarge
     }
 }

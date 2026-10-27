@@ -64,6 +64,7 @@ final class NameFieldView: UIView {
         label.isAccessibilityElement = false
 
         textField.font = Typography.body.font()
+        textField.adjustsFontForContentSizeCategory = true
         textField.textColor = .primaryText
         textField.tintColor = .primaryText
         textField.autocapitalizationType = .words
