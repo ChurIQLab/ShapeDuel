@@ -649,6 +649,24 @@
         }
       }
     },
+    "moveAnnouncement" : {
+      "comment" : "VoiceOver announcement of a move: the player's name, the figure and the cell, e.g. «Player 1: Cross, Center»",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: %2$@, %3$@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: %2$@, %3$@"
+          }
+        }
+      }
+    },
     "movingPlayer" : {
       "comment" : "VoiceOver state of the player card whose turn it is",
       "extractionState" : "manual",

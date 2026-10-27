@@ -293,6 +293,40 @@ struct GamePresenterTests {
         #expect(view.result?.title == String(localized: .winnerTitle("Аня")))
     }
 
+    @Test func moveIsAnnouncedWithNextTurn() throws {
+        let (presenter, view) = makePresenter(names: enteredNames)
+        let cell = try position(1, 1)
+
+        presenter.didTapCell(at: cell)
+
+        let move = String(localized: .moveAnnouncement("Аня", Figure.cross.accessibilityName, cell.accessibilityName))
+        #expect(view.announcements == ["\(move). \(String(localized: .turnStatus("Макс")))"])
+    }
+
+    @Test func lastMoveIsAnnouncedWithoutResult() throws {
+        let (presenter, view) = makePresenter()
+
+        try tap(firstSideWin, on: presenter)
+
+        let cell = try position(0, 2)
+        #expect(view.announcements.count == firstSideWin.count)
+        #expect(view.announcements.last == String(localized: .moveAnnouncement(
+            String(localized: .firstPlayerName),
+            Figure.cross.accessibilityName,
+            cell.accessibilityName
+        )))
+    }
+
+    @Test func ignoredTapIsNotAnnounced() throws {
+        let (presenter, view) = makePresenter()
+        let cell = try position(1, 1)
+
+        presenter.didTapCell(at: cell)
+        presenter.didTapCell(at: cell)
+
+        #expect(view.announcements.count == 1)
+    }
+
     @Test func tapOnMenuShowsMenu() throws {
         let router = RouterSpy()
         let (presenter, _) = makePresenter(router: router)

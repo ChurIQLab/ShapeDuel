@@ -72,6 +72,31 @@ struct GamePresenterComputerTests {
         #expect(game.view.status?.text == String(localized: .yourTurnStatus))
     }
 
+    @Test func playerAndComputerMovesAreAnnounced() throws {
+        let game = makeGame()
+        let playerCell = try Position.at(1, 1)
+        let computerCell = try Position.at(0, 0)
+        let computerName = String(localized: .computerName)
+
+        game.presenter.didTapCell(at: playerCell)
+        game.scheduler.completePendingMove(at: computerCell)
+
+        let playerMove = String(localized: .moveAnnouncement(
+            String(localized: .youName),
+            Figure.cross.accessibilityName,
+            playerCell.accessibilityName
+        ))
+        let computerMove = String(localized: .moveAnnouncement(
+            computerName,
+            Figure.circle.accessibilityName,
+            computerCell.accessibilityName
+        ))
+        #expect(game.view.announcements == [
+            "\(playerMove). \(String(localized: .computerThinkingStatus(computerName)))",
+            "\(computerMove). \(String(localized: .yourTurnStatus))"
+        ])
+    }
+
     @Test func tapsWhileComputerThinksAreIgnored() throws {
         let game = makeGame()
 

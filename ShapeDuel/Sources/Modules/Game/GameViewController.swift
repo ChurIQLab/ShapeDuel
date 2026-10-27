@@ -81,6 +81,12 @@ extension GameViewController: GameViewProtocol {
         gameView.setBoardLocked(isLocked)
     }
 
+    func announce(_ text: String) {
+        // Queued, so VoiceOver first finishes reading the tapped cell
+        let announcement = NSAttributedString(string: text, attributes: [.accessibilitySpeechQueueAnnouncement: true])
+        UIAccessibility.post(notification: .announcement, argument: announcement)
+    }
+
     func showGameOver(_ result: GameResultViewModel, winningLine: WinningLineViewModel?) {
         gameView.showGameOver(winningLine: winningLine) { [weak self] in
             self?.presentResult(result)
