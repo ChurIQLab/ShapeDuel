@@ -61,6 +61,7 @@ final class SettingsView: UIView {
         scrollView.addSubview(contentStackView)
 
         footerLabel.font = Typography.small.font()
+        footerLabel.adjustsFontForContentSizeCategory = true
         footerLabel.textColor = .secondaryText
         footerLabel.textAlignment = .center
         footerLabel.numberOfLines = 0
@@ -161,6 +162,7 @@ final class SettingsView: UIView {
         let label = UILabel()
         label.text = text
         label.font = Typography.accent.font()
+        label.adjustsFontForContentSizeCategory = true
         label.textColor = .primaryText
         label.numberOfLines = 0
         return label

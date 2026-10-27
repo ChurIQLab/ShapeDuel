@@ -14,14 +14,25 @@ final class SectionLabel: UILabel {
 
     override var text: String? {
         get { attributedText?.string }
-        set { updateText(newValue) }
+        set {
+            rawText = newValue
+            updateText()
+        }
     }
+
+    /// The text as it was set, before it is uppercased
+    private var rawText: String?
 
     // MARK: - Initial
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         numberOfLines = 0
+        registerForTraitChanges(
+            [UITraitPreferredContentSizeCategory.self]
+        ) { (label: SectionLabel, _: UITraitCollection) in
+            label.updateText()
+        }
     }
 
     required init?(coder: NSCoder) {
@@ -30,12 +41,13 @@ final class SectionLabel: UILabel {
 
     // MARK: - Private methods
 
-    private func updateText(_ text: String?) {
-        guard let text else {
+    /// The font and the letter spacing are in the attributed text, so it is built again for a new text size
+    private func updateText() {
+        guard let text = rawText else {
             attributedText = nil
             return
         }
-        let font = Typography.sectionLabel.font()
+        let font = Typography.sectionLabel.font(compatibleWith: traitCollection)
         attributedText = NSAttributedString(
             string: text.localizedUppercase,
             attributes: [

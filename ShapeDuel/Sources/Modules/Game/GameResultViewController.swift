@@ -112,6 +112,7 @@ final class GameResultViewController: UIViewController {
     private func setupLabels() {
         titleLabel.text = result.title
         titleLabel.font = Typography.title.font()
+        titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.textColor = .primaryText
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
@@ -121,6 +122,7 @@ final class GameResultViewController: UIViewController {
 
         scoreLabel.text = result.score
         scoreLabel.font = Typography.body.font()
+        scoreLabel.adjustsFontForContentSizeCategory = true
         scoreLabel.textColor = .secondaryText
         scoreLabel.textAlignment = .center
         scoreLabel.numberOfLines = 0

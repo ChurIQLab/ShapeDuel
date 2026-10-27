@@ -219,6 +219,7 @@ final class GameSetupView: UIView {
         let label = UILabel()
         label.text = text
         label.font = Typography.caption.font()
+        label.adjustsFontForContentSizeCategory = true
         label.textColor = .secondaryText
         label.numberOfLines = 0
         return label

@@ -102,6 +102,7 @@ final class MenuView: UIView {
 
         titleLabel.text = String(localized: .appTitle)
         titleLabel.font = Typography.largeTitle.font()
+        titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.textColor = .primaryText
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
@@ -109,6 +110,7 @@ final class MenuView: UIView {
 
         subtitleLabel.text = String(localized: .appSubtitle)
         subtitleLabel.font = Typography.body.font()
+        subtitleLabel.adjustsFontForContentSizeCategory = true
         subtitleLabel.textColor = .secondaryText
         subtitleLabel.textAlignment = .center
         subtitleLabel.numberOfLines = 0

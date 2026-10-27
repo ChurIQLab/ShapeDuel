@@ -54,11 +54,13 @@ final class PlayerCardView: UIView {
         isAccessibilityElement = true
 
         nameLabel.font = Typography.captionBold.font()
+        nameLabel.adjustsFontForContentSizeCategory = true
         // «Компьютер» fits on a narrow card, a long name still ends with an ellipsis
         nameLabel.adjustsFontSizeToFitWidth = true
         nameLabel.minimumScaleFactor = Constants.minimumNameScale
         nameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         scoreLabel.font = Typography.score.font()
+        scoreLabel.adjustsFontForContentSizeCategory = true
         scoreLabel.setContentHuggingPriority(.required, for: .horizontal)
         scoreLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
 

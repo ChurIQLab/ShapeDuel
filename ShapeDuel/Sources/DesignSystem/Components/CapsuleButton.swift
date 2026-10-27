@@ -28,13 +28,20 @@ final class CapsuleButton: UIButton {
         configuration.cornerStyle = .capsule
         configuration.baseBackgroundColor = style.backgroundColor
         configuration.baseForegroundColor = style.foregroundColor
-        configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attributes in
-            var attributes = attributes
-            attributes.font = Typography.accent.font()
+        configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { [weak self] in
+            var attributes = $0
+            attributes.font = Typography.accent.font(compatibleWith: self?.traitCollection)
             return attributes
         }
         self.configuration = configuration
         heightAnchor.constraint(equalToConstant: height).isActive = true
+
+        // The transformer sets the font, so it runs again for a new text size
+        registerForTraitChanges(
+            [UITraitPreferredContentSizeCategory.self]
+        ) { (button: CapsuleButton, _: UITraitCollection) in
+            button.setNeedsUpdateConfiguration()
+        }
     }
 }
 

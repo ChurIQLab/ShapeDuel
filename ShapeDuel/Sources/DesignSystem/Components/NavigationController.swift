@@ -15,6 +15,11 @@ final class NavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
+        registerForTraitChanges(
+            [UITraitPreferredContentSizeCategory.self]
+        ) { (navigationController: NavigationController, _: UITraitCollection) in
+            navigationController.setupNavigationBar()
+        }
     }
 
     override func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
@@ -29,11 +34,13 @@ final class NavigationController: UINavigationController {
 
     // MARK: - Setups
 
+    /// The title grows with the text size up to xxxL, like on the segmented controls: the bar keeps its height
     private func setupNavigationBar() {
+        navigationBar.maximumContentSizeCategory = Constants.maximumContentSizeCategory
         let appearance = UINavigationBarAppearance()
         appearance.configureWithTransparentBackground()
         appearance.titleTextAttributes = [
-            .font: Typography.accent.font(),
+            .font: Typography.accent.font(compatibleWith: navigationBar.traitCollection),
             .foregroundColor: UIColor.primaryText
         ]
         navigationBar.standardAppearance = appearance
@@ -46,5 +53,13 @@ final class NavigationController: UINavigationController {
 
     private func hideBackButtonTitle(of viewController: UIViewController) {
         viewController.navigationItem.backButtonDisplayMode = .minimal
+    }
+}
+
+// MARK: - Constants
+
+extension NavigationController {
+    struct Constants {
+        static let maximumContentSizeCategory: UIContentSizeCategory = .extraExtraExtraLarge
     }
 }
