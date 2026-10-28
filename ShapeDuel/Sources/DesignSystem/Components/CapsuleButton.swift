@@ -11,9 +11,10 @@ final class CapsuleButton: UIButton {
 
     // MARK: - Initial
 
-    init(title: String, style: Style, height: CGFloat = Size.buttonHeight) {
+    /// On a large text size the button grows taller than `minimumHeight` and wraps its title
+    init(title: String, style: Style, minimumHeight: CGFloat = Size.buttonHeight) {
         super.init(frame: .zero)
-        setupView(title: title, style: style, height: height)
+        setupView(title: title, style: style, minimumHeight: minimumHeight)
     }
 
     required init?(coder: NSCoder) {
@@ -22,10 +23,12 @@ final class CapsuleButton: UIButton {
 
     // MARK: - Setups
 
-    private func setupView(title: String, style: Style, height: CGFloat) {
+    private func setupView(title: String, style: Style, minimumHeight: CGFloat) {
         var configuration = UIButton.Configuration.filled()
         configuration.title = title
         configuration.cornerStyle = .capsule
+        configuration.contentInsets = Constants.contentInsets
+        configuration.titleAlignment = .center
         configuration.baseBackgroundColor = style.backgroundColor
         configuration.baseForegroundColor = style.foregroundColor
         configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { [weak self] in
@@ -34,7 +37,7 @@ final class CapsuleButton: UIButton {
             return attributes
         }
         self.configuration = configuration
-        heightAnchor.constraint(equalToConstant: height).isActive = true
+        heightAnchor.constraint(greaterThanOrEqualToConstant: minimumHeight).isActive = true
 
         // The transformer sets the font, so it runs again for a new text size
         registerForTraitChanges(
@@ -65,5 +68,14 @@ extension CapsuleButton {
             case .secondary: .primaryText
             }
         }
+    }
+}
+
+// MARK: - Constants
+
+extension CapsuleButton {
+    struct Constants {
+        /// Around a title wrapped on a large text size; on the default size the minimum height decides
+        static let contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 20, bottom: 12, trailing: 20)
     }
 }

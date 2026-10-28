@@ -26,6 +26,7 @@ final class MenuItemView: UIControl {
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let chevronImageView = UIImageView()
+    private let contentStackView = UIStackView()
 
     // MARK: - Initial
 
@@ -73,12 +74,24 @@ final class MenuItemView: UIControl {
         textStackView.axis = .vertical
         textStackView.spacing = Constants.textSpacing
 
-        let contentStackView = UIStackView(arrangedSubviews: [iconBackgroundView, textStackView, chevronImageView])
-        contentStackView.alignment = .center
+        for subview in [iconBackgroundView, textStackView, chevronImageView] {
+            contentStackView.addArrangedSubview(subview)
+        }
         contentStackView.spacing = Constants.contentSpacing
+        updateContentAxis()
+        registerForTraitChanges(
+            [UITraitPreferredContentSizeCategory.self]
+        ) { (itemView: MenuItemView, _: UITraitCollection) in
+            itemView.updateContentAxis()
+        }
         contentStackView.isUserInteractionEnabled = false
         contentStackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(contentStackView)
+
+        // The card is as low as its content allows; stronger than the wish of the menu content
+        // to fill the screen, so the card does not stretch when the text gets smaller
+        let fittingHeight = heightAnchor.constraint(equalToConstant: 0)
+        fittingHeight.priority = .defaultLow + 1
 
         NSLayoutConstraint.activate([
             cardView.topAnchor.constraint(equalTo: topAnchor),
@@ -86,6 +99,7 @@ final class MenuItemView: UIControl {
             cardView.trailingAnchor.constraint(equalTo: trailingAnchor),
             cardView.bottomAnchor.constraint(equalTo: bottomAnchor),
             heightAnchor.constraint(greaterThanOrEqualToConstant: Size.menuItemHeight),
+            fittingHeight,
             contentStackView.topAnchor.constraint(
                 greaterThanOrEqualTo: topAnchor,
                 constant: Spacing.menuItemPadding
@@ -128,6 +142,17 @@ final class MenuItemView: UIControl {
         subtitleLabel.adjustsFontForContentSizeCategory = true
         subtitleLabel.textColor = .secondaryText
         subtitleLabel.numberOfLines = 0
+    }
+
+    // MARK: - Private methods
+
+    /// In a row; on the accessibility text sizes the icon goes above the text and the chevron hides,
+    /// so long words fit the width of the card
+    private func updateContentAxis() {
+        let isLarge = traitCollection.preferredContentSizeCategory.isAccessibilityCategory
+        contentStackView.axis = isLarge ? .vertical : .horizontal
+        contentStackView.alignment = isLarge ? .leading : .center
+        chevronImageView.isHidden = isLarge
     }
 }
 

@@ -92,7 +92,8 @@ final class NameFieldView: UIView {
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            cardView.heightAnchor.constraint(equalToConstant: Size.textFieldHeight),
+            // The field grows with the text size
+            cardView.heightAnchor.constraint(greaterThanOrEqualToConstant: Size.textFieldHeight),
 
             textField.topAnchor.constraint(equalTo: cardView.topAnchor),
             textField.leadingAnchor.constraint(equalTo: cardView.leadingAnchor),

@@ -24,6 +24,7 @@ final class GameView: UIView {
 
     // MARK: - Outlets
 
+    private let scrollView = UIScrollView()
     private let contentStackView = UIStackView()
     private let playersStackView = UIStackView()
     private let boardStackView = UIStackView()
@@ -104,29 +105,44 @@ final class GameView: UIView {
         setupPlayers()
         setupBoard()
 
+        // On a large text size the content does not fit and scrolls
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(scrollView)
+
         contentStackView.axis = .vertical
         contentStackView.spacing = Spacing.betweenBlocks(for: .regular)
         contentStackView.translatesAutoresizingMaskIntoConstraints = false
         contentStackView.addArrangedSubview(playersStackView)
         contentStackView.addArrangedSubview(boardStackView)
         contentStackView.addArrangedSubview(statusView)
-        addSubview(contentStackView)
+        scrollView.addSubview(contentStackView)
 
         winLineView.spacing = Spacing.betweenCells
         winLineView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(winLineView)
+        scrollView.addSubview(winLineView)
 
         let safeArea = safeAreaLayoutGuide
+        let contentGuide = scrollView.contentLayoutGuide
+        let frameGuide = scrollView.frameLayoutGuide
         NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+            contentGuide.widthAnchor.constraint(equalTo: frameGuide.widthAnchor),
+            // The content is centered while it fits, and starts at the top when it does not
+            contentGuide.heightAnchor.constraint(greaterThanOrEqualTo: frameGuide.heightAnchor),
+            fittingHeight(of: contentGuide.heightAnchor, equalTo: frameGuide.heightAnchor, priority: .defaultLow),
             contentStackView.leadingAnchor.constraint(
-                equalTo: safeArea.leadingAnchor,
+                equalTo: contentGuide.leadingAnchor,
                 constant: Spacing.screenMargin
             ),
             contentStackView.trailingAnchor.constraint(
-                equalTo: safeArea.trailingAnchor,
+                equalTo: contentGuide.trailingAnchor,
                 constant: -Spacing.screenMargin
             ),
-            contentStackView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
+            contentStackView.centerYAnchor.constraint(equalTo: contentGuide.centerYAnchor),
+            contentStackView.topAnchor.constraint(greaterThanOrEqualTo: contentGuide.topAnchor),
             boardStackView.heightAnchor.constraint(equalTo: boardStackView.widthAnchor),
             winLineView.topAnchor.constraint(equalTo: boardStackView.topAnchor),
             winLineView.leadingAnchor.constraint(equalTo: boardStackView.leadingAnchor),
@@ -136,16 +152,22 @@ final class GameView: UIView {
     }
 
     private func setupPlayers() {
-        playersStackView.axis = .horizontal
         playersStackView.spacing = Spacing.betweenCards
         playersStackView.distribution = .fillEqually
+        updatePlayersAxis()
+        registerForTraitChanges([UITraitPreferredContentSizeCategory.self]) { (view: GameView, _: UITraitCollection) in
+            view.updatePlayersAxis()
+        }
 
         for side in Side.allCases {
             let playerCard = PlayerCardView()
+            // The card grows with the text size
             let heightConstraint = playerCard.heightAnchor.constraint(
-                equalToConstant: Size.playerCardHeight(for: .regular)
+                greaterThanOrEqualToConstant: Size.playerCardHeight(for: .regular)
             )
             heightConstraint.isActive = true
+            // Stronger than the content wish below, so a card does not stretch when the text gets smaller
+            fittingHeight(of: playerCard.heightAnchor, equalTo: nil, priority: .defaultLow + 1).isActive = true
             playerCardHeightConstraints.append(heightConstraint)
             playerCards[side] = playerCard
             playersStackView.addArrangedSubview(playerCard)
@@ -182,6 +204,24 @@ final class GameView: UIView {
     }
 
     // MARK: - Private methods
+
+    /// A weak wish for the smallest height: the other constraints only set lower bounds
+    private func fittingHeight(
+        of anchor: NSLayoutDimension,
+        equalTo other: NSLayoutDimension?,
+        priority: UILayoutPriority
+    ) -> NSLayoutConstraint {
+        let constraint = other.map { anchor.constraint(equalTo: $0) } ?? anchor.constraint(equalToConstant: 0)
+        constraint.priority = priority
+        return constraint
+    }
+
+    /// Side by side; on the accessibility text sizes one under the other, so the names fit
+    private func updatePlayersAxis() {
+        playersStackView.axis = traitCollection.preferredContentSizeCategory.isAccessibilityCategory
+            ? .vertical
+            : .horizontal
+    }
 
     private func updateHeightClass() {
         guard !bounds.isEmpty else { return }

@@ -20,6 +20,7 @@ final class GameResultViewController: UIViewController {
 
     // MARK: - Outlets
 
+    private let scrollView = UIScrollView()
     private let grabberView = UIView()
     private let badgeView = UIView()
     private let figuresStackView = UIStackView()
@@ -69,10 +70,53 @@ final class GameResultViewController: UIViewController {
         textStackView.axis = .vertical
         textStackView.spacing = Constants.textSpacing
 
+        let buttonsStackView = makeButtonsStackView()
+
+        let contentStackView = UIStackView(arrangedSubviews: [grabberView, badgeView, textStackView, buttonsStackView])
+        contentStackView.axis = .vertical
+        contentStackView.alignment = .center
+        contentStackView.spacing = Constants.contentSpacing
+        contentStackView.translatesAutoresizingMaskIntoConstraints = false
+
+        // The sheet is as tall as its content; on a large text size it stops below the top of the screen
+        // and the content scrolls
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(contentStackView)
+        view.addSubview(scrollView)
+
+        let margins = view.layoutMarginsGuide
+        let contentGuide = scrollView.contentLayoutGuide
+        let frameGuide = scrollView.frameLayoutGuide
+        let fittingHeight = frameGuide.heightAnchor.constraint(equalTo: contentGuide.heightAnchor)
+        fittingHeight.priority = .defaultHigh
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: margins.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: margins.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: margins.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: margins.bottomAnchor),
+            fittingHeight,
+            contentGuide.widthAnchor.constraint(equalTo: frameGuide.widthAnchor),
+            contentStackView.topAnchor.constraint(equalTo: contentGuide.topAnchor),
+            contentStackView.leadingAnchor.constraint(equalTo: contentGuide.leadingAnchor),
+            contentStackView.trailingAnchor.constraint(equalTo: contentGuide.trailingAnchor),
+            contentStackView.bottomAnchor.constraint(equalTo: contentGuide.bottomAnchor),
+            textStackView.widthAnchor.constraint(equalTo: contentStackView.widthAnchor),
+            buttonsStackView.widthAnchor.constraint(equalTo: contentStackView.widthAnchor)
+        ])
+
+        // A new text size changes the height of the content, so the sheet takes a new frame
+        registerForTraitChanges(
+            [UITraitPreferredContentSizeCategory.self]
+        ) { (viewController: GameResultViewController, _: UITraitCollection) in
+            viewController.presentationController?.containerView?.setNeedsLayout()
+        }
+    }
+
+    private func makeButtonsStackView() -> UIStackView {
         let playAgainButton = CapsuleButton(
             title: String(localized: .playAgainButton),
             style: .primary,
-            height: Size.sheetButtonHeight
+            minimumHeight: Size.sheetButtonHeight
         )
         playAgainButton.addAction(UIAction { [weak self] _ in
             self?.playAgain()
@@ -81,7 +125,7 @@ final class GameResultViewController: UIViewController {
         let menuButton = CapsuleButton(
             title: String(localized: .menuButton),
             style: .secondary,
-            height: Size.sheetButtonHeight
+            minimumHeight: Size.sheetButtonHeight
         )
         menuButton.addAction(UIAction { [weak self] _ in
             self?.goToMenu()
@@ -90,23 +134,7 @@ final class GameResultViewController: UIViewController {
         let buttonsStackView = UIStackView(arrangedSubviews: [playAgainButton, menuButton])
         buttonsStackView.axis = .vertical
         buttonsStackView.spacing = Constants.buttonSpacing
-
-        let contentStackView = UIStackView(arrangedSubviews: [grabberView, badgeView, textStackView, buttonsStackView])
-        contentStackView.axis = .vertical
-        contentStackView.alignment = .center
-        contentStackView.spacing = Constants.contentSpacing
-        contentStackView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(contentStackView)
-
-        let margins = view.layoutMarginsGuide
-        NSLayoutConstraint.activate([
-            contentStackView.topAnchor.constraint(equalTo: margins.topAnchor),
-            contentStackView.leadingAnchor.constraint(equalTo: margins.leadingAnchor),
-            contentStackView.trailingAnchor.constraint(equalTo: margins.trailingAnchor),
-            contentStackView.bottomAnchor.constraint(equalTo: margins.bottomAnchor),
-            textStackView.widthAnchor.constraint(equalTo: contentStackView.widthAnchor),
-            buttonsStackView.widthAnchor.constraint(equalTo: contentStackView.widthAnchor)
-        ])
+        return buttonsStackView
     }
 
     private func setupLabels() {

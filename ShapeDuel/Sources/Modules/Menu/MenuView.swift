@@ -15,6 +15,7 @@ final class MenuView: UIView {
 
     // MARK: - Outlets
 
+    private let scrollView = UIScrollView()
     private let markView = DuelMarkView()
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
@@ -51,10 +52,14 @@ final class MenuView: UIView {
         backgroundColor = .screenBackground
         setupHeader()
 
+        // On a large text size the header and the items do not fit and scroll
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(scrollView)
+
         itemsStackView.axis = .vertical
         itemsStackView.spacing = Spacing.betweenCards
         itemsStackView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(itemsStackView)
+        scrollView.addSubview(itemsStackView)
 
         let textStackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         textStackView.axis = .vertical
@@ -66,29 +71,61 @@ final class MenuView: UIView {
         headerStackView.alignment = .center
         headerStackView.spacing = Constants.headerSpacing
         headerStackView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(headerStackView)
+        scrollView.addSubview(headerStackView)
 
-        // The header is centered in the space above the menu items
-        let headerAreaGuide = UILayoutGuide()
-        addLayoutGuide(headerAreaGuide)
+        setupConstraints(headerStackView: headerStackView)
+    }
+
+    private func setupConstraints(headerStackView: UIStackView) {
+        // The header is centered in the space above the menu items. A view, not a layout guide:
+        // a guide added to the scroll view stays in place while the content scrolls
+        let headerAreaView = UIView()
+        headerAreaView.isUserInteractionEnabled = false
+        headerAreaView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.insertSubview(headerAreaView, at: 0)
 
         let safeArea = safeAreaLayoutGuide
+        let contentGuide = scrollView.contentLayoutGuide
+        let frameGuide = scrollView.frameLayoutGuide
+        // The items stay at the bottom of the screen while everything fits
+        let fittingHeight = contentGuide.heightAnchor.constraint(equalTo: frameGuide.heightAnchor)
+        fittingHeight.priority = .defaultLow
         NSLayoutConstraint.activate([
-            itemsStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Spacing.screenMargin),
+            scrollView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+            contentGuide.widthAnchor.constraint(equalTo: frameGuide.widthAnchor),
+            contentGuide.heightAnchor.constraint(greaterThanOrEqualTo: frameGuide.heightAnchor),
+            fittingHeight,
+
+            itemsStackView.leadingAnchor.constraint(
+                equalTo: contentGuide.leadingAnchor,
+                constant: Spacing.screenMargin
+            ),
             itemsStackView.trailingAnchor.constraint(
-                equalTo: safeArea.trailingAnchor,
+                equalTo: contentGuide.trailingAnchor,
                 constant: -Spacing.screenMargin
             ),
-            itemsStackView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+            itemsStackView.bottomAnchor.constraint(equalTo: contentGuide.bottomAnchor),
 
-            headerAreaGuide.topAnchor.constraint(equalTo: safeArea.topAnchor),
-            headerAreaGuide.bottomAnchor.constraint(equalTo: itemsStackView.topAnchor),
+            headerAreaView.topAnchor.constraint(equalTo: contentGuide.topAnchor),
+            headerAreaView.leadingAnchor.constraint(equalTo: contentGuide.leadingAnchor),
+            headerAreaView.trailingAnchor.constraint(equalTo: contentGuide.trailingAnchor),
+            headerAreaView.bottomAnchor.constraint(equalTo: itemsStackView.topAnchor),
 
-            headerStackView.centerYAnchor.constraint(equalTo: headerAreaGuide.centerYAnchor),
-            headerStackView.topAnchor.constraint(greaterThanOrEqualTo: headerAreaGuide.topAnchor),
-            headerStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: Spacing.screenMargin),
+            headerStackView.centerYAnchor.constraint(equalTo: headerAreaView.centerYAnchor),
+            headerStackView.topAnchor.constraint(greaterThanOrEqualTo: headerAreaView.topAnchor),
+            headerStackView.bottomAnchor.constraint(
+                lessThanOrEqualTo: headerAreaView.bottomAnchor,
+                constant: -Constants.headerSpacing
+            ),
+            headerStackView.leadingAnchor.constraint(
+                equalTo: contentGuide.leadingAnchor,
+                constant: Spacing.screenMargin
+            ),
             headerStackView.trailingAnchor.constraint(
-                equalTo: safeArea.trailingAnchor,
+                equalTo: contentGuide.trailingAnchor,
                 constant: -Spacing.screenMargin
             ),
 
