@@ -76,6 +76,62 @@ struct ContentSizeTests {
         #expect(sizes.count == 3)
         #expect(sizes.allSatisfy { $0 == cappedSize })
     }
+
+    @Test func capsuleButtonGrowsTallerThanMinimumHeight() {
+        // The button updates its configuration only in a window
+        let screen = UIWindow(frame: CGRect(x: 0, y: 0, width: 360, height: 800))
+        screen.isHidden = false
+        let button = CapsuleButton(title: "Play again", style: .primary, minimumHeight: 54)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        screen.addSubview(button)
+        NSLayoutConstraint.activate([
+            button.topAnchor.constraint(equalTo: screen.topAnchor),
+            button.leadingAnchor.constraint(equalTo: screen.leadingAnchor),
+            button.trailingAnchor.constraint(equalTo: screen.trailingAnchor)
+        ])
+        setContentSize(.large, on: screen)
+        screen.layoutIfNeeded()
+        let defaultHeight = button.frame.height
+
+        setLargestContentSize(on: screen)
+        screen.layoutIfNeeded()
+
+        #expect(defaultHeight == 54)
+        #expect(button.frame.height > 54)
+    }
+
+    @Test func playerCardsGoOneUnderAnotherOnAccessibilitySizes() throws {
+        let view = GameView()
+        setContentSize(.large, on: view)
+        let playersStackView = try #require(allSubviews(of: view).compactMap { $0 as? UIStackView }.first {
+            $0.arrangedSubviews.contains { $0 is PlayerCardView }
+        })
+        #expect(playersStackView.axis == .horizontal)
+
+        setLargestContentSize(on: view)
+
+        #expect(playersStackView.axis == .vertical)
+    }
+
+    @Test func menuItemHidesChevronOnAccessibilitySizes() throws {
+        let item = MenuItemView()
+        setContentSize(.large, on: item)
+        let chevron = try #require(allSubviews(of: item).compactMap { $0 as? UIImageView }.last)
+        #expect(!chevron.isHidden)
+
+        setLargestContentSize(on: item)
+
+        #expect(chevron.isHidden)
+    }
+
+    @Test func segmentsShowLargeContentViewer() {
+        let control = SegmentedControl(titles: ["Easy", "Medium", "Hard"])
+
+        let segments = allSubviews(of: control).filter(\.showsLargeContentViewer)
+
+        #expect(segments.map(\.largeContentTitle) == ["Easy", "Medium", "Hard"])
+        #expect(control.interactions.contains { $0 is UILargeContentViewerInteraction })
+    }
 }
 
 extension ContentSizeTests {

@@ -43,12 +43,14 @@ final class GameStatusView: UIView {
         accessibilityTraits = .updatesFrequently
 
         textLabel.textAlignment = .center
+        textLabel.numberOfLines = 0
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         addSubview(textLabel)
 
         NSLayoutConstraint.activate([
             heightAnchor.constraint(greaterThanOrEqualToConstant: Constants.minimumHeight),
             textLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            textLabel.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor),
             textLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             textLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             textLabel.centerYAnchor.constraint(equalTo: centerYAnchor)

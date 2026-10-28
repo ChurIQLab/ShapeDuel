@@ -94,6 +94,8 @@ final class SegmentedControl: UIControl {
             segmentsStackView.addArrangedSubview(segment)
         }
         accessibilityElements = segments
+        // The titles stop growing at xxxL, so on larger sizes a long press shows the title enlarged
+        addInteraction(UILargeContentViewerInteraction())
 
         NSLayoutConstraint.activate([
             heightAnchor.constraint(equalToConstant: style.height),
@@ -174,6 +176,8 @@ extension SegmentedControl {
         private func setupView(title: String, font: UIFont) {
             isAccessibilityElement = true
             accessibilityLabel = title
+            showsLargeContentViewer = true
+            largeContentTitle = title
 
             titleLabel.text = title
             titleLabel.font = font

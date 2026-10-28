@@ -16,6 +16,7 @@ final class PlayerCardView: UIView {
     private let nameLabel = UILabel()
     private let scoreLabel = UILabel()
     private let contentStackView = UIStackView()
+    private lazy var figureSizeConstraint = figureView.widthAnchor.constraint(equalToConstant: Size.figureInCard)
 
     // MARK: - Initial
 
@@ -84,15 +85,31 @@ final class PlayerCardView: UIView {
             contentStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Spacing.cardPadding),
             contentStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Spacing.cardPadding),
             contentStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            figureView.widthAnchor.constraint(equalToConstant: Size.figureInCard),
-            figureView.heightAnchor.constraint(equalToConstant: Size.figureInCard)
+            contentStackView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: Constants.verticalPadding),
+            figureSizeConstraint,
+            figureView.heightAnchor.constraint(equalTo: figureView.widthAnchor)
         ])
+
+        updateFigureSize()
+        registerForTraitChanges(
+            [UITraitPreferredContentSizeCategory.self]
+        ) { (card: PlayerCardView, _: UITraitCollection) in
+            card.updateFigureSize()
+        }
     }
 }
 
 // MARK: - Private methods
 
 extension PlayerCardView {
+    /// The figure grows with the name next to it
+    private func updateFigureSize() {
+        figureSizeConstraint.constant = UIFontMetrics(forTextStyle: .subheadline).scaledValue(
+            for: Size.figureInCard,
+            compatibleWith: traitCollection
+        )
+    }
+
     /// «Moves now, score: 2»: the state is read before the score
     private func accessibilityValue(for viewModel: PlayerCardViewModel) -> String {
         let score = String(localized: .playerScore(viewModel.score))
@@ -109,6 +126,8 @@ extension PlayerCardView {
 extension PlayerCardView {
     struct Constants {
         static let contentSpacing: CGFloat = 10
+        /// Keeps the text off the edges when a large text size makes the card taller
+        static let verticalPadding: CGFloat = 8
         static let minimumNameScale: CGFloat = 0.75
     }
 }
