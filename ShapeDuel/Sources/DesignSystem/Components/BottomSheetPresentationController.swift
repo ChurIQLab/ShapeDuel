@@ -158,11 +158,70 @@ extension BottomSheetPresentationController {
 
 /// Keep a strong reference: `transitioningDelegate` of a view controller is weak
 final class BottomSheetTransitioningDelegate: NSObject, UIViewControllerTransitioningDelegate {
+
+    // MARK: - Properties
+
+    private let isReduceMotionEnabled: () -> Bool
+
+    // MARK: - Initial
+
+    init(isReduceMotionEnabled: @escaping () -> Bool = { UIAccessibility.isReduceMotionEnabled }) {
+        self.isReduceMotionEnabled = isReduceMotionEnabled
+        super.init()
+    }
+
+    // MARK: - Methods
+
     func presentationController(
         forPresented presented: UIViewController,
         presenting: UIViewController?,
         source: UIViewController
     ) -> UIPresentationController? {
         BottomSheetPresentationController(presentedViewController: presented, presenting: presenting)
+    }
+
+    /// `nil` keeps the system slide from the bottom
+    func animationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController,
+        source: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+        isReduceMotionEnabled() ? BottomSheetFadeAnimator() : nil
+    }
+
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        isReduceMotionEnabled() ? BottomSheetFadeAnimator() : nil
+    }
+}
+
+// MARK: - BottomSheetFadeAnimator
+
+/// With Reduce Motion the sheet fades in and out instead of sliding
+final class BottomSheetFadeAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+        BottomSheetPresentationController.Constants.swipeAnimationDuration
+    }
+
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        let duration = transitionDuration(using: transitionContext)
+        if let presentedView = transitionContext.view(forKey: .to),
+           let presented = transitionContext.viewController(forKey: .to) {
+            presentedView.frame = transitionContext.finalFrame(for: presented)
+            presentedView.alpha = 0
+            transitionContext.containerView.addSubview(presentedView)
+            UIView.animate(withDuration: duration) {
+                presentedView.alpha = 1
+            } completion: { _ in
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            }
+        } else if let dismissedView = transitionContext.view(forKey: .from) {
+            UIView.animate(withDuration: duration) {
+                dismissedView.alpha = 0
+            } completion: { _ in
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            }
+        } else {
+            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+        }
     }
 }
