@@ -13,6 +13,8 @@ final class MenuView: UIView {
 
     var onItemTap: ((GameMode) -> Void)?
 
+    private var bottomMarginConstraint: NSLayoutConstraint?
+
     // MARK: - Outlets
 
     private let scrollView = UIScrollView()
@@ -20,6 +22,13 @@ final class MenuView: UIView {
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let itemsStackView = UIStackView()
+
+    // MARK: - Lifecycle
+
+    override func safeAreaInsetsDidChange() {
+        super.safeAreaInsetsDidChange()
+        bottomMarginConstraint?.constant = -Spacing.bottomMargin(safeAreaInset: safeAreaInsets.bottom)
+    }
 
     // MARK: - Initial
 
@@ -90,6 +99,8 @@ final class MenuView: UIView {
         // The items stay at the bottom of the screen while everything fits
         let fittingHeight = contentGuide.heightAnchor.constraint(equalTo: frameGuide.heightAnchor)
         fittingHeight.priority = .defaultLow
+        let bottomMarginConstraint = itemsStackView.bottomAnchor.constraint(equalTo: contentGuide.bottomAnchor)
+        self.bottomMarginConstraint = bottomMarginConstraint
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: safeArea.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
@@ -107,7 +118,7 @@ final class MenuView: UIView {
                 equalTo: contentGuide.trailingAnchor,
                 constant: -Spacing.screenMargin
             ),
-            itemsStackView.bottomAnchor.constraint(equalTo: contentGuide.bottomAnchor),
+            bottomMarginConstraint,
 
             headerAreaView.topAnchor.constraint(equalTo: contentGuide.topAnchor),
             headerAreaView.leadingAnchor.constraint(equalTo: contentGuide.leadingAnchor),

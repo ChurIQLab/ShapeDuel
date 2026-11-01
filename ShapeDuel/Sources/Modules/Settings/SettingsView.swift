@@ -14,11 +14,20 @@ final class SettingsView: UIView {
     var onThemeSelect: ((Int) -> Void)?
     var onHapticsChange: ((Bool) -> Void)?
 
+    private var bottomMarginConstraint: NSLayoutConstraint?
+
     // MARK: - Outlets
 
     private let scrollView = UIScrollView()
     private let contentStackView = UIStackView()
     private let footerLabel = UILabel()
+
+    // MARK: - Lifecycle
+
+    override func safeAreaInsetsDidChange() {
+        super.safeAreaInsetsDidChange()
+        bottomMarginConstraint?.constant = -Spacing.bottomMargin(safeAreaInset: safeAreaInsets.bottom)
+    }
 
     // MARK: - Initial
 
@@ -70,6 +79,8 @@ final class SettingsView: UIView {
 
         let contentGuide = scrollView.contentLayoutGuide
         let frameGuide = scrollView.frameLayoutGuide
+        let bottomMarginConstraint = footerLabel.bottomAnchor.constraint(equalTo: contentGuide.bottomAnchor)
+        self.bottomMarginConstraint = bottomMarginConstraint
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -95,7 +106,7 @@ final class SettingsView: UIView {
             ),
             footerLabel.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
             footerLabel.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
-            footerLabel.bottomAnchor.constraint(equalTo: contentGuide.bottomAnchor)
+            bottomMarginConstraint
         ])
     }
 

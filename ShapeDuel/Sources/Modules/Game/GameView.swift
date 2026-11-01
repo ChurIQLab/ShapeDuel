@@ -19,6 +19,8 @@ final class GameView: UIView {
     private var playerNames: [Side: String] = [:]
     private var playerCardHeightConstraints: [NSLayoutConstraint] = []
     private var heightClass: HeightClass?
+    /// The content is centered, so the margin above it keeps the same margin below it when it scrolls
+    private var contentMarginConstraint: NSLayoutConstraint?
     /// Changes on every reset, so a finished game ending after a restart is not shown
     private var gameID = 0
 
@@ -36,6 +38,11 @@ final class GameView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         updateHeightClass()
+    }
+
+    override func safeAreaInsetsDidChange() {
+        super.safeAreaInsetsDidChange()
+        contentMarginConstraint?.constant = Spacing.bottomMargin(safeAreaInset: safeAreaInsets.bottom)
     }
 
     // MARK: - Initial
@@ -124,6 +131,10 @@ final class GameView: UIView {
         let safeArea = safeAreaLayoutGuide
         let contentGuide = scrollView.contentLayoutGuide
         let frameGuide = scrollView.frameLayoutGuide
+        let contentMarginConstraint = contentStackView.topAnchor.constraint(
+            greaterThanOrEqualTo: contentGuide.topAnchor
+        )
+        self.contentMarginConstraint = contentMarginConstraint
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: safeArea.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
@@ -142,7 +153,7 @@ final class GameView: UIView {
                 constant: -Spacing.screenMargin
             ),
             contentStackView.centerYAnchor.constraint(equalTo: contentGuide.centerYAnchor),
-            contentStackView.topAnchor.constraint(greaterThanOrEqualTo: contentGuide.topAnchor),
+            contentMarginConstraint,
             boardStackView.heightAnchor.constraint(equalTo: boardStackView.widthAnchor),
             winLineView.topAnchor.constraint(equalTo: boardStackView.topAnchor),
             winLineView.leadingAnchor.constraint(equalTo: boardStackView.leadingAnchor),
