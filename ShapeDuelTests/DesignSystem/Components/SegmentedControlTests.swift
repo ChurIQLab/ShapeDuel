@@ -48,6 +48,32 @@ struct SegmentedControlTests {
         #expect(changes == 0)
     }
 
+    @Test func reduceMotionMovesThumbWithoutAnimation() throws {
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 300, height: 100))
+        window.isHidden = false
+        let control = SegmentedControl(titles: Constants.titles) { true }
+        control.frame = CGRect(x: 0, y: 0, width: 300, height: 44)
+        window.addSubview(control)
+        window.layoutIfNeeded()
+
+        control.setSelectedIndex(2, animated: true)
+
+        #expect(allLayers(of: control).allSatisfy { $0.animationKeys() == nil })
+    }
+
+    @Test func thumbSlidesWithoutReduceMotion() throws {
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 300, height: 100))
+        window.isHidden = false
+        let control = SegmentedControl(titles: Constants.titles) { false }
+        control.frame = CGRect(x: 0, y: 0, width: 300, height: 44)
+        window.addSubview(control)
+        window.layoutIfNeeded()
+
+        control.setSelectedIndex(2, animated: true)
+
+        #expect(allLayers(of: control).contains { $0.animationKeys() != nil })
+    }
+
     @Test func selectingInCodeSendsNothing() throws {
         let control = SegmentedControl(titles: Constants.titles)
         var changes = 0
@@ -91,6 +117,10 @@ extension SegmentedControlTests {
     private func height(of style: SegmentedControl.Style) -> CGFloat {
         let control = SegmentedControl(titles: Constants.titles, style: style)
         return control.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+    }
+
+    private func allLayers(of view: UIView) -> [CALayer] {
+        [view.layer] + view.subviews.flatMap { allLayers(of: $0) }
     }
 
     private func selectedIndices(of control: SegmentedControl) throws -> [Int] {

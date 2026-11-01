@@ -18,6 +18,7 @@ final class SegmentedControl: UIControl {
 
     private let style: Style
     private let segments: [Segment]
+    private let isReduceMotionEnabled: () -> Bool
 
     // MARK: - Outlets
 
@@ -35,8 +36,14 @@ final class SegmentedControl: UIControl {
 
     // MARK: - Initial
 
-    init(titles: [String], selectedIndex: Int = 0, style: Style = .onBackground) {
+    init(
+        titles: [String],
+        selectedIndex: Int = 0,
+        style: Style = .onBackground,
+        isReduceMotionEnabled: @escaping () -> Bool = { UIAccessibility.isReduceMotionEnabled }
+    ) {
         self.style = style
+        self.isReduceMotionEnabled = isReduceMotionEnabled
         segments = titles.map { Segment(title: $0, font: style.font) }
         self.selectedIndex = titles.indices.contains(selectedIndex) ? selectedIndex : 0
         super.init(frame: .zero)
@@ -54,7 +61,8 @@ final class SegmentedControl: UIControl {
         selectedIndex = index
         updateSegments()
 
-        guard animated, window != nil else {
+        // With Reduce Motion the thumb does not travel: it appears at the selected segment
+        guard animated, window != nil, !isReduceMotionEnabled() else {
             setNeedsLayout()
             return
         }
