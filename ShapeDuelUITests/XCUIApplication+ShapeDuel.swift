@@ -66,7 +66,8 @@ extension XCUIApplication {
             "twoPlayers.secondFigure": "circle",
             "twoPlayers.firstName": "",
             "twoPlayers.secondName": "",
-            "computer.playerFigure": "cross"
+            "computer.playerFigure": "cross",
+            "computer.difficulty": "medium"
         ]
     }
 }
