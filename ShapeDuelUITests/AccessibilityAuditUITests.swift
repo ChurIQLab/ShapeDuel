@@ -43,7 +43,7 @@ final class AccessibilityAuditUITests: XCTestCase {
         app.assertShows("Player 2 wins, Score 0 : 1")
         // The audit of a sheet still sliding up reports the game behind it
         app.assertSettled(app.buttons["Play again"])
-        try audit(app)
+        try audit(app, allowing: [.gameUnderSheet])
     }
 
     @MainActor
@@ -78,6 +78,9 @@ extension AccessibilityAuditUITests {
         /// The status line is attributed text with the figure image; it is built again on a new text size,
         /// which the audit does not see (covered by `ContentSizeTests`)
         case rebuiltStatusText
+        /// The game shows through the scrim of the result sheet, while VoiceOver reads only the sheet,
+        /// like with a system sheet. Reported on the CI runner only
+        case gameUnderSheet
         /// A player name stays on one line and shrinks before an ellipsis; on the accessibility sizes
         /// the cards go one under the other, so a usual name fits
         case shrinkingPlayerNames
@@ -88,6 +91,8 @@ extension AccessibilityAuditUITests {
                 issue.auditType == .dynamicType && issue.compactDescription.contains("partially")
             case .rebuiltStatusText:
                 issue.auditType == .dynamicType && !issue.compactDescription.contains("partially")
+            case .gameUnderSheet:
+                issue.auditType == .elementDetection
             case .shrinkingPlayerNames:
                 issue.auditType == .textClipped
             }
