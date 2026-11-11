@@ -20,6 +20,7 @@ final class AccessibilityAuditUITests: XCTestCase {
         try audit(app)
 
         app.tapButton("Settings")
+        app.assertGone("Two players")
         try audit(app, allowing: [.cappedSegmentTitles])
     }
 
@@ -27,9 +28,11 @@ final class AccessibilityAuditUITests: XCTestCase {
     func testTwoPlayersSetupGameAndResult() throws {
         let app = XCUIApplication.launchedShapeDuel()
         app.tapButton("Two players")
+        app.assertGone("Against the computer")
         try audit(app)
 
         app.tapButton("Play")
+        app.assertGone("Play")
         app.tapButton("Center")
         try audit(app, allowing: [.rebuiltStatusText, .shrinkingPlayerNames])
 
@@ -38,6 +41,8 @@ final class AccessibilityAuditUITests: XCTestCase {
             app.tapButton(cell)
         }
         app.assertShows("Player 2 wins, Score 0 : 1")
+        // The audit of a sheet still sliding up reports the game behind it
+        app.assertSettled(app.buttons["Play again"])
         try audit(app)
     }
 
@@ -45,6 +50,7 @@ final class AccessibilityAuditUITests: XCTestCase {
     func testComputerSetup() throws {
         let app = XCUIApplication.launchedShapeDuel()
         app.tapButton("Against the computer")
+        app.assertGone("Two players")
         try audit(app, allowing: [.cappedSegmentTitles])
     }
 }
