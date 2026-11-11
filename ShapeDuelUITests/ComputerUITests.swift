@@ -34,9 +34,10 @@ final class ComputerUITests: XCTestCase {
         }
 
         XCTAssertTrue(playAgainButton.waitForExistence(timeout: XCUIApplication.Constants.timeout))
-        let resultTitle = app.staticTexts.matching(
-            NSPredicate(format: "label BEGINSWITH 'You win' OR label BEGINSWITH 'Computer wins' "
-                + "OR label BEGINSWITH \"It's a draw\"")
+        let resultTitle = app.descendants(matching: .any).matching(
+            // The sheet title is read with the score; the status line under the board has no score
+            NSPredicate(format: "(label BEGINSWITH 'You win' OR label BEGINSWITH 'Computer wins' "
+                + "OR label BEGINSWITH \"It's a draw\") AND label CONTAINS ', Score '")
         )
         XCTAssertEqual(resultTitle.count, 1)
 

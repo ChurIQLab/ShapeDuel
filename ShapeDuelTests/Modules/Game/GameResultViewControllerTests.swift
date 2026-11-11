@@ -11,7 +11,7 @@ import UIKit
 
 struct GameResultViewControllerTests {
 
-    @Test func titleIsReadWithScoreAndScoreIsNotReadTwice() throws {
+    @Test func titleAndScoreAreOneHeaderElement() throws {
         let result = GameResultViewModel(
             title: "Anna wins",
             score: "Score 1 : 0",
@@ -22,12 +22,11 @@ struct GameResultViewControllerTests {
 
         viewController.loadViewIfNeeded()
 
-        let labels = allSubviews(of: viewController.view).compactMap { $0 as? UILabel }
-        let title = try #require(labels.first { $0.text == result.title })
-        let score = try #require(labels.first { $0.text == result.score })
-        #expect(title.accessibilityLabel == "Anna wins, Score 1 : 0")
-        #expect(title.accessibilityTraits.contains(.header))
-        #expect(!score.isAccessibilityElement)
+        let elements = allSubviews(of: viewController.view).filter(\.isAccessibilityElement)
+        let header = try #require(elements.first { $0.accessibilityTraits.contains(.header) })
+        #expect(header.accessibilityLabel == "Anna wins, Score 1 : 0")
+        #expect(header.subviews.contains { ($0 as? UILabel)?.text == result.title })
+        #expect(header.subviews.contains { ($0 as? UILabel)?.text == result.score })
     }
 }
 

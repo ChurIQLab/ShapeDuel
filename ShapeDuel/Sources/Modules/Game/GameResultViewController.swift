@@ -26,6 +26,7 @@ final class GameResultViewController: UIViewController {
     private let figuresStackView = UIStackView()
     private let titleLabel = UILabel()
     private let scoreLabel = UILabel()
+    private let textStackView = UIStackView()
 
     // MARK: - Lifecycle
 
@@ -36,7 +37,7 @@ final class GameResultViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        UIAccessibility.post(notification: .screenChanged, argument: titleLabel)
+        UIAccessibility.post(notification: .screenChanged, argument: textStackView)
     }
 
     override func accessibilityPerformEscape() -> Bool {
@@ -66,7 +67,8 @@ final class GameResultViewController: UIViewController {
         setupBadge()
         setupLabels()
 
-        let textStackView = UIStackView(arrangedSubviews: [titleLabel, scoreLabel])
+        textStackView.addArrangedSubview(titleLabel)
+        textStackView.addArrangedSubview(scoreLabel)
         textStackView.axis = .vertical
         textStackView.spacing = Constants.textSpacing
 
@@ -137,16 +139,19 @@ final class GameResultViewController: UIViewController {
         return buttonsStackView
     }
 
+    /// The title and the score are one VoiceOver element: the sheet focuses it, so the score is read
+    /// right after the title, and neither text is hidden from VoiceOver
     private func setupLabels() {
+        textStackView.isAccessibilityElement = true
+        textStackView.accessibilityLabel = "\(result.title), \(result.score)"
+        textStackView.accessibilityTraits = .header
+
         titleLabel.text = result.title
         titleLabel.font = Typography.title.font()
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.textColor = .primaryText
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
-        titleLabel.accessibilityTraits = .header
-        // The sheet focuses the title, so it is read together with the score
-        titleLabel.accessibilityLabel = "\(result.title), \(result.score)"
 
         scoreLabel.text = result.score
         scoreLabel.font = Typography.body.font()
@@ -154,7 +159,6 @@ final class GameResultViewController: UIViewController {
         scoreLabel.textColor = .secondaryText
         scoreLabel.textAlignment = .center
         scoreLabel.numberOfLines = 0
-        scoreLabel.isAccessibilityElement = false
     }
 
     private func setupGrabber() {
