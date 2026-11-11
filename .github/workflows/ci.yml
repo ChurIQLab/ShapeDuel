@@ -59,24 +59,34 @@ jobs:
           swiftlint lint --strict --reporter github-actions-logging
 
       # A fresh simulator booted in advance, so xcodebuild does not hit boot timeouts.
-      # On a slow runner xcodebuild may not see it right after the boot and fails with
-      # "Unable to find a device", so the step waits until the simulator is among its destinations
+      # Now and then xcodebuild on the runner does not see any simulator, although simctl shows it booted
+      # (actions/runner-images#12948). Waiting does not help then, restarting CoreSimulatorService does
       - name: Boot simulator
         run: |
+          is_seen_by_xcodebuild() {
+            for attempt in 1 2 3; do
+              destinations=$(xcodebuild -showdestinations -project ShapeDuel.xcodeproj -scheme ShapeDuel 2>&1 || true)
+              grep -q "id:$udid" <<< "$destinations" && return 0
+              echo "Attempt $attempt: xcodebuild does not see the simulator yet"
+              sleep 15
+            done
+            return 1
+          }
+
           udid=$(xcrun simctl create "CI $SIMULATOR_DEVICE" "$SIMULATOR_DEVICE")
           xcrun simctl bootstatus "$udid" -b
-          for attempt in 1 2 3 4 5; do
-            destinations=$(xcodebuild -showdestinations -project ShapeDuel.xcodeproj -scheme ShapeDuel 2>&1 || true)
-            if grep -q "id:$udid" <<< "$destinations"; then
-              echo "SIMULATOR_UDID=$udid" >> "$GITHUB_ENV"
-              exit 0
+          if ! is_seen_by_xcodebuild; then
+            echo "::warning::xcodebuild does not see the simulator, restarting CoreSimulatorService"
+            sudo killall -9 com.apple.CoreSimulator.CoreSimulatorService || true
+            xcrun simctl bootstatus "$udid" -b
+            if ! is_seen_by_xcodebuild; then
+              echo "$destinations"
+              xcrun simctl list runtimes
+              xcrun simctl list devices booted
+              exit 1
             fi
-            echo "Attempt $attempt: xcodebuild does not see the simulator yet"
-            sleep 15
-          done
-          echo "$destinations"
-          xcrun simctl list devices booted
-          exit 1
+          fi
+          echo "SIMULATOR_UDID=$udid" >> "$GITHUB_ENV"
 
       - name: Build
         run: |
